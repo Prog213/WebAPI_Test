@@ -15,15 +15,16 @@ namespace WebApplication1.Repositories
             _context = context;
         }
 
-        public async Task CreateAsync(Contact contactModel)
+        public async Task<Contact> CreateAsync(Contact contactModel)
         {
             await _context.Contacts.AddAsync(contactModel);
             await _context.SaveChangesAsync();
+            return contactModel;
         }
 
-        public Task<Contact?> GetByEmailAsync(string email)
+        public async Task<Contact?> GetByEmailAsync(string email)
         {
-            var contact = _context.Contacts.FirstOrDefaultAsync(c => c.Email == email);
+            var contact = await _context.Contacts.FirstOrDefaultAsync(c => c.Email == email);
             return contact;
         }
 
@@ -31,6 +32,14 @@ namespace WebApplication1.Repositories
         {
             var contact = await _context.Contacts.FindAsync(id);
             return contact;
+        }
+
+        public async Task UpdateAsync(Contact contactModel, ContactDto contactDto)
+        {
+            contactModel.Email = contactDto.Email;
+            contactModel.FirstName = contactDto.FirstName;
+            contactModel.LastName = contactDto.LastName;
+            await _context.SaveChangesAsync();
         }
     }
 }

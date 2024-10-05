@@ -4,8 +4,9 @@ namespace WebApplication1.Interfaces
 {
     public interface IAccountRepository
     {
-        Task CreateAsync(Account accountModel);
+        Task<Account> CreateAsync(Account accountModel);
         Task<Account?> GetByNameAsync(string name);
+        Task UpdateContactIdAsync(int contactId, Account accountModel);
 
     }
 }

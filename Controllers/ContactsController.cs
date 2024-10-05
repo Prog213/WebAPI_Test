@@ -31,7 +31,7 @@ namespace WebApplication1.Controllers
                 return Conflict("A contact with this email already exists.");
             }
 
-            var contact = contactDto.FromContactDto();
+            var contact = contactDto.ToContactModel();
 
             await _contactsRepository.CreateAsync(contact);
 

@@ -14,16 +14,23 @@ namespace WebApplication1.Repositories
         {
             _context = context;
         }
-        public async Task CreateAsync(Account accountModel)
+        public async Task<Account> CreateAsync (Account accountModel)
         {
             await _context.Accounts.AddAsync(accountModel);
             await _context.SaveChangesAsync();
+            return accountModel;
         }
 
-        public Task<Account?> GetByNameAsync(string name)
+        public async Task<Account?> GetByNameAsync(string name)
         {
-            var account = _context.Accounts.FirstOrDefaultAsync(a => a.Name == name);
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.Name == name);
             return account;
+        }
+
+        public async Task UpdateContactIdAsync(int contactId, Account accountModel)
+        {
+            accountModel.ContactId = contactId;
+            await _context.SaveChangesAsync();
         }
     }
 }

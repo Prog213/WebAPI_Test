@@ -5,7 +5,7 @@ namespace WebApplication1.Mappers
 {
     public static class AccountMapper
     {
-        public static Account FromAccountDto(this AccountDto accountDto)
+        public static Account ToAccountModel(this AccountDto accountDto)
         {
             return new Account
             {

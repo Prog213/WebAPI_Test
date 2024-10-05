@@ -15,7 +15,7 @@ namespace WebApplication1.Mappers
             };
         }
 
-        public static Contact FromContactDto(this ContactDto contactDto)
+        public static Contact ToContactModel(this ContactDto contactDto)
         {
             return new Contact
             {

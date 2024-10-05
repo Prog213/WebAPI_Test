@@ -41,7 +41,7 @@ namespace WebApplication1.Controllers
                 return Conflict("An account with this name already exists.");
             }
 
-            var account = accountDto.FromAccountDto();
+            var account = accountDto.ToAccountModel();
 
             await _accountRepository.CreateAsync(account);
 
