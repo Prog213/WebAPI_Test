@@ -14,11 +14,19 @@ namespace WebApplication1.Repositories
         {
             _context = context;
         }
-        public async Task<Account> CreateAsync (Account accountModel)
+
+        public async Task<bool> AccountExists(string name)
+        {
+            return await _context.Accounts.AnyAsync(a => a.Name == name);
+        }
+
+        public async Task<Account> CreateAsync(Account accountModel)
         {
             await _context.Accounts.AddAsync(accountModel);
             await _context.SaveChangesAsync();
-            return accountModel;
+
+            return await _context.Accounts.Include(a => a.Contact)
+                .FirstAsync(a => a.AccountId == accountModel.AccountId);
         }
 
         public async Task<Account?> GetByNameAsync(string name)

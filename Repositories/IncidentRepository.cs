@@ -16,7 +16,10 @@ namespace WebApplication1.Repositories
         {
             await _context.Incidents.AddAsync(incidentModel);
             await _context.SaveChangesAsync();
-            return incidentModel;
+
+            return await _context.Incidents.Include(i => i.Account)
+                .ThenInclude(a => a.Contact)
+                .FirstAsync(i => i.IncidentName == incidentModel.IncidentName);
         }
     }
 }

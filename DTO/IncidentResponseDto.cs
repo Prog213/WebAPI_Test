@@ -4,6 +4,6 @@
     {
         public string IncidentName { get; set; } = null!;
         public string Description { get; set; } = null!;
-        public int AccountId { get; set; } 
+        public AccountResponseDto? Account { get; set; } 
     }
 }

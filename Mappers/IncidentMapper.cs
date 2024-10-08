@@ -5,9 +5,9 @@ namespace WebApplication1.Mappers
 {
     public static class IncidentMapper
     {
-        public static ContactDto FromIncidentDtoToContactDto(this IncidentDto incidentDto)
+        public static Contact ToContact(this IncidentDto incidentDto)
         {
-            return new ContactDto
+            return new Contact
             {
                 Email = incidentDto.contactEmail,
                 FirstName = incidentDto.contactFirstName,
@@ -29,7 +29,7 @@ namespace WebApplication1.Mappers
         {
             return new IncidentResponseDto
             {
-                AccountId = incidentModel.AccountId,
+                Account = incidentModel.Account.ToAccountResponseDto(),
                 Description = incidentModel.Description,
                 IncidentName = incidentModel.IncidentName
             };

@@ -8,7 +8,8 @@ namespace WebApplication1.Interfaces
         Task<Contact> CreateAsync(Contact contactModel);
         Task<Contact?> GetByIdAsync(int id);
         Task<Contact?> GetByEmailAsync(string email);
-        Task UpdateAsync (Contact contactModel, ContactDto contactDto);
-
+        Task UpdateAsync (int id, Contact contact);
+        Task<bool> ContactExists(int id);
+        Task<bool> ContactExists(string email);
     }
 }

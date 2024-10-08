@@ -7,6 +7,7 @@ namespace WebApplication1.Interfaces
         Task<Account> CreateAsync(Account accountModel);
         Task<Account?> GetByNameAsync(string name);
         Task UpdateContactIdAsync(int contactId, Account accountModel);
+        Task<bool> AccountExists(string name);
 
     }
 }

@@ -15,6 +15,16 @@ namespace WebApplication1.Repositories
             _context = context;
         }
 
+        public async Task<bool> ContactExists(int id)
+        {
+            return await _context.Contacts.AnyAsync(c => c.ContactId == id);
+        }
+
+        public async Task<bool> ContactExists(string email)
+        {
+            return await _context.Contacts.AnyAsync(c => c.Email == email);
+        }
+
         public async Task<Contact> CreateAsync(Contact contactModel)
         {
             await _context.Contacts.AddAsync(contactModel);
@@ -34,12 +44,17 @@ namespace WebApplication1.Repositories
             return contact;
         }
 
-        public async Task UpdateAsync(Contact contactModel, ContactDto contactDto)
+        public async Task UpdateAsync(int id, Contact contact)
         {
-            contactModel.Email = contactDto.Email;
-            contactModel.FirstName = contactDto.FirstName;
-            contactModel.LastName = contactDto.LastName;
-            await _context.SaveChangesAsync();
+            var existingContact = await GetByIdAsync(id);
+
+            if (existingContact != null)
+            {
+                existingContact.Email = contact.Email;
+                existingContact.FirstName = contact.FirstName;
+                existingContact.LastName = contact.LastName;
+                await _context.SaveChangesAsync();
+            }
         }
     }
 }

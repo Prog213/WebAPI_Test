@@ -4,6 +4,7 @@ using WebApplication1.DTO;
 using WebApplication1.Interfaces;
 using WebApplication1.Mappers;
 using WebApplication1.Models;
+using WebApplication1.Repositories;
 
 namespace WebApplication1.Controllers
 {
@@ -11,24 +12,21 @@ namespace WebApplication1.Controllers
     [Route("api/incident")]
     public class IncidentController : ControllerBase
     {
-        private readonly MyDbContext _context;
         private readonly IAccountRepository _accountRepository;
         private readonly IContactsRepository _contactsRepository;
-        private readonly IIncidentRepository _insidentRepository;
+        private readonly IIncidentRepository _incidentRepository;
 
-        public IncidentController(MyDbContext context, IAccountRepository accountRepository, IContactsRepository contactsRepository
+        public IncidentController(IAccountRepository accountRepository, IContactsRepository contactsRepository
             ,IIncidentRepository insidentRepository)
         {
-            _context = context;
             _accountRepository = accountRepository;
             _contactsRepository = contactsRepository;
-            _insidentRepository = insidentRepository;
+            _incidentRepository = insidentRepository;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateInsident([FromBody] IncidentDto incidentDto)
         {
-
             var account = await _accountRepository.GetByNameAsync(incidentDto.accountName);
             if (account == null)
             {
@@ -36,29 +34,38 @@ namespace WebApplication1.Controllers
             }
 
             var contact = await _contactsRepository.GetByEmailAsync(incidentDto.contactEmail);
-            var contactDto = incidentDto.FromIncidentDtoToContactDto();
 
             if (contact != null)
             {
-                await _contactsRepository.UpdateAsync(contact, contactDto);
-                
-                if (account.ContactId != contact.ContactId)
-                {
-                    await _accountRepository.UpdateContactIdAsync(contact.ContactId, account);
-                }
+                await UpdateContactAndLinkToAccount(contact, account, incidentDto);
 
                 return Ok("Contact updated succesfully");
             }
             else
             {
-                var newContact = await _contactsRepository.CreateAsync(contactDto.ToContactModel());
-                await _accountRepository.UpdateContactIdAsync(newContact.ContactId, account);
+                await CreateContactAndLinkToAccount(account, incidentDto);
 
                 var incidentModel = incidentDto.ToIncidentModel(account.AccountId);
-                await _insidentRepository.CreateAsync(incidentModel);
+
+                await _incidentRepository.CreateAsync(incidentModel);
                 return CreatedAtAction(nameof(CreateInsident), incidentModel.ToIncidentResponseDto());
             }
+        }
 
+        private async Task UpdateContactAndLinkToAccount(Contact contact, Account account, IncidentDto incidentDto)
+        {
+            await _contactsRepository.UpdateAsync(contact.ContactId, incidentDto.ToContact());
+
+            if (account.ContactId != contact.ContactId)
+            {
+                await _accountRepository.UpdateContactIdAsync(contact.ContactId, account);
+            }
+        }
+
+        private async Task CreateContactAndLinkToAccount(Account account, IncidentDto incidentDto)
+        {
+            var newContact = await _contactsRepository.CreateAsync(incidentDto.ToContact());
+            await _accountRepository.UpdateContactIdAsync(newContact.ContactId, account);
         }
     }
 }
